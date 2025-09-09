@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Instagram - Restablecer contraseña</title>
+<script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<style>
+  body {margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:#fafafa;color:#262626;}
+  .container {display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;}
+  .card {background:#fff;border:1px solid #dbdbdb;padding:40px;border-radius:8px;width:100%;max-width:350px;text-align:center;}
+  .logo {font-family:'Billabong',cursive;font-size:48px;margin-bottom:24px;color:#262626;}
+  .card h2 {font-size:18px;font-weight:600;margin-bottom:16px;}
+  input[type="email"] {width:100%;padding:10px;margin-bottom:14px;border:1px solid #dbdbdb;border-radius:4px;background:#fafafa;font-size:14px;}
+  button {width:100%;background:#0095f6;color:#fff;font-weight:600;padding:10px;border:none;border-radius:4px;cursor:pointer;font-size:14px;}
+  button:disabled {background:#b2dffc;cursor:not-allowed;}
+  .extra {margin-top:20px;font-size:12px;color:#8e8e8e;}
+  .link {color:#0095f6;text-decoration:none;font-weight:600;}
+  .footer {margin-top:30px;font-size:12px;color:#8e8e8e;}
+  .success {color:green;font-size:14px;margin-top:12px;}
+  .error {color:red;font-size:14px;margin-top:12px;}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <div class="logo">Instagram</div>
+    <h2>¿Has olvidado tu contraseña?</h2>
+    <form id="resetForm">
+      <input type="email" id="email" name="email" placeholder="Correo electrónico" required>
+      <button type="submit" id="sendBtn" disabled>Enviar enlace</button>
+    </form>
+    <div id="status"></div>
+    <div class="extra">¿No tienes cuenta? <a href="#" class="link">Regístrate</a></div>
+  </div>
+  <div class="footer">© 2025 Instagram Clone</div>
+</div>
+
+<script>
+  // Inicializa EmailJS
+  (function(){
+    emailjs.init("user_email"); // Pon aquí tu User ID de EmailJS
+  })();
+
+  const emailInput = document.getElementById('email');
+  const sendBtn = document.getElementById('sendBtn');
+  const form = document.getElementById('resetForm');
+  const status = document.getElementById('status');
+
+  emailInput.addEventListener('input', () => {
+    sendBtn.disabled = emailInput.value.trim() === '';
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    sendBtn.disabled = true;
+    const templateParams = {
+      user_email: emailInput.value.trim()
+    };
+
+    emailjs.send("TU_SERVICE_ID", "TU_TEMPLATE_ID", templateParams)
+      .then(function(response) {
+        status.innerHTML = '<div class="success">Se ha enviado un enlace de restablecimiento a: ' + emailInput.value + '</div>';
+        form.reset();
+      }, function(error) {
+        status.innerHTML = '<div class="error">Error al enviar el correo. Intenta de nuevo.</div>';
+      }).finally(()=> sendBtn.disabled = false);
+  });
+</script>
+</body>
+</html>
